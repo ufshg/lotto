@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const root = document.getElementById("root");
+
+    function Button(props) {
+      const setNumber = () => {
+        props.getNumber(props.index);
+      };
+      return (
+        <button
+          index={props.index}
+          onClick={setNumber}
+          style={{
+            backgroundColor: props.isSelected ? "skyblue" : "tomato",
+            width: "50px",
+            height: "50px",
+            margin: "5px 5px 5px 5px",
+          }}
+        >
+          {props.index}
+        </button>
+      );
+    }
+
+    function Show(props) {
+      return (
+        <div>
+          현재 선택된 개수 {props.count}개<br />총 조합 수 {props.total}개
+        </div>
+      );
+    }
+
+    const combination = (comb, pairs, ret) => {
+      if (comb.length == 6) {
+        return ret.push(comb);
+      }
+      pairs.forEach((v, idx) => {
+        const pairs_ = pairs.slice(idx + 1);
+        combination([...comb, v], pairs_, ret);
+      });
+    };
+
+    function result(pairs) {
+      const array = [];
+      for (var i = 1; i < 46; i++) {
+        if (pairs[i][0] === 1) array.push(i);
+      }
+
+      const ret = [];
+      combination([], array, ret);
+      return ret;
+    }
+
+    function shuffle(array) {
+      array.sort(() => Math.random() - 0.5);
+    }
+
+    function Result(pairs, e) {
+      const print = document.getElementById("print");
+      const ret = result(pairs);
+      shuffle(ret);
+
+      print.innerHTML = "";
+
+      ret.slice(0, 7).map(function (a) {
+        a.forEach((v, idx) => {
+          print.innerHTML += v;
+          if (idx !== 5) print.innerHTML += "&nbsp&nbsp";
+        });
+        print.innerHTML += "<br/><br/>";
+      });
+
+      console.log(ret);
+    }
+
+    function App() {
+      const pairs = [];
+      for (var i = 0; i < 46; i++) {
+        pairs.push(React.useState(1));
+      }
+
+      const [count, setCount] = React.useState(45);
+      const total = [
+        0, 0, 0, 0, 0, 0, 1, 7, 28, 84, 210, 462, 924, 1716, 3003, 5005, 8008,
+        12376, 18564, 27132, 38760, 54264, 74613, 100947, 134596, 177100,
+        230230, 296010, 376740, 475020, 593775, 736281, 906192, 1107568,
+        1344904, 1623160, 1947792, 2324784, 2760681, 3262623, 3838380, 4496388,
+        5245786, 6096454, 7059052, 8145060,
+      ];
+
+      const getNumber = (index) => {
+        if (count === 6 && pairs[index][0]) return;
+        setCount(pairs[index][0] === 1 ? count - 1 : count + 1);
+        pairs[index][1](pairs[index][0] === 1 ? 0 : 1);
+      };
+
+      return (
+        <div style={{ "text-align": "center" }}>
+          <h1>로또</h1>
+          <div>
+            {pairs.slice(1, 10).map(function (a, i) {
+              return (
+                <Button
+                  index={i + 1}
+                  getNumber={getNumber}
+                  isSelected={pairs[i + 1][0]}
+                />
+              );
+            })}
+          </div>
+          <div>
+            {pairs.slice(10, 19).map(function (a, i) {
+              return (
+                <Button
+                  index={i + 10}
+                  getNumber={getNumber}
+                  isSelected={pairs[i + 10][0]}
+                />
+              );
+            })}
+          </div>
+          <div>
+            {pairs.slice(19, 28).map(function (a, i) {
+              return (
+                <Button
+                  index={i + 19}
+                  getNumber={getNumber}
+                  isSelected={pairs[i + 19][0]}
+                />
+              );
+            })}
+          </div>
+          <div>
+            {pairs.slice(28, 37).map(function (a, i) {
+              return (
+                <Button
+                  index={i + 28}
+                  getNumber={getNumber}
+                  isSelected={pairs[i + 28][0]}
+                />
+              );
+            })}
+          </div>
+          <div>
+            {pairs.slice(37).map(function (a, i) {
+              return (
+                <Button
+                  index={i + 37}
+                  getNumber={getNumber}
+                  isSelected={pairs[i + 37][0]}
+                />
+              );
+            })}
+          </div>
+          <hr />
+          <Show count={count} total={total[count]} />
+          <p>
+            <button
+              onClick={(e) => {
+                Result(pairs, e);
+              }}
+            >
+              리롤
+            </button>
+          </p>
+          <p>
+            <div id="print"></div>
+          </p>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, root);
+  </script>
+</html>
