@@ -59,7 +59,10 @@
     }
 
     function shuffle(array) {
-      array.sort(() => Math.random() - 0.5);
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
 
     function Result(pairs, e) {
@@ -76,8 +79,6 @@
         });
         print.innerHTML += "<br/><br/>";
       });
-
-      console.log(ret);
     }
 
     function App() {
@@ -166,8 +167,9 @@
               onClick={(e) => {
                 Result(pairs, e);
               }}
+              style={{ width: "100px", height: "50px" }}
             >
-              리롤
+              추출
             </button>
           </p>
           <p>
