@@ -47,17 +47,6 @@
       });
     };
 
-    function result(pairs) {
-      const array = [];
-      for (var i = 1; i < 46; i++) {
-        if (pairs[i][0] === 1) array.push(i);
-      }
-
-      const ret = [];
-      combination([], array, ret);
-      return ret;
-    }
-
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -65,25 +54,47 @@
       }
     }
 
-    function Result(pairs, e) {
-      const print = document.getElementById("print");
-      const ret = result(pairs);
+    function result(pairs) {
+      const color = ["#fbc400", "#69c8f2", "#ff7272", "#aaa", "#b0d840"];
+      const array = [];
+      for (let i = 1; i < 46; i++) {
+        if (pairs[i][0] === 1) array.push(i);
+      }
+
+      const ret = [];
+      combination([], array, ret);
+
       shuffle(ret);
 
-      print.innerHTML = "";
+      for (let i = 0; i < 7; i++) {
+        const line = ret[i];
+        for (let j = 0; j < 6; j++) {
+          let target = document.getElementById("" + (i * 6 + j));
+          target.innerHTML = "" + line[j];
+          target.style.backgroundColor = color[Math.floor((line[j] - 1) / 10)];
+        }
+      }
+    }
 
-      ret.slice(0, 7).map(function (a) {
-        a.forEach((v, idx) => {
-          print.innerHTML += v;
-          if (idx !== 5) print.innerHTML += "&nbsp&nbsp";
-        });
-        print.innerHTML += "<br/><br/>";
-      });
+    function Ball(props) {
+      return (
+        <div
+          id={props.name}
+          style={{
+            width: "30px",
+            height: "30px",
+            "border-radius": "50%",
+            backgroundColor: "#eee",
+            display: "inline-block",
+            margin: "10px 5px 10px 5px",
+          }}
+        ></div>
+      );
     }
 
     function App() {
       const pairs = [];
-      for (var i = 0; i < 46; i++) {
+      for (let i = 0; i < 46; i++) {
         pairs.push(React.useState(1));
       }
 
@@ -96,6 +107,11 @@
         5245786, 6096454, 7059052, 8145060,
       ];
 
+      const balls = [];
+      for (let i = 0; i < 42; i++) {
+        balls.push(React.useState(<Ball name={"" + i} />));
+      }
+
       const getNumber = (index) => {
         if (count === 6 && pairs[index][0]) return;
         setCount(pairs[index][0] === 1 ? count - 1 : count + 1);
@@ -103,7 +119,7 @@
       };
 
       return (
-        <div style={{ "text-align": "center" }}>
+        <div style={{ "text-align": "center", "line-height": "33px" }}>
           <h1>로또</h1>
           <div>
             {pairs.slice(1, 10).map(function (a, i) {
@@ -160,21 +176,54 @@
               );
             })}
           </div>
-          <hr />
+          <br />
           <Show count={count} total={total[count]} />
           <p>
             <button
               onClick={(e) => {
-                Result(pairs, e);
+                result(pairs, e);
               }}
               style={{ width: "100px", height: "50px" }}
             >
               추출
             </button>
           </p>
-          <p>
-            <div id="print"></div>
-          </p>
+          <hr />
+          <div>
+            {balls.slice(0, 6).map(function (a) {
+              return a;
+            })}
+          </div>
+          <div>
+            {balls.slice(6, 12).map(function (a) {
+              return a;
+            })}
+          </div>
+          <div>
+            {balls.slice(12, 18).map(function (a) {
+              return a;
+            })}
+          </div>
+          <div>
+            {balls.slice(18, 24).map(function (a) {
+              return a;
+            })}
+          </div>
+          <div>
+            {balls.slice(24, 30).map(function (a) {
+              return a;
+            })}
+          </div>
+          <div>
+            {balls.slice(30, 36).map(function (a) {
+              return a;
+            })}
+          </div>
+          <div>
+            {balls.slice(36, 42).map(function (a) {
+              return a;
+            })}
+          </div>
         </div>
       );
     }
